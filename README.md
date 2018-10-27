@@ -1,6 +1,6 @@
-#Lossless Data Transfer
+# Lossless Data Transfer
 
-##Deskripsi Singkat
+## Deskripsi Singkat
 
 Komunikasi antar komputer merupakan hal yang sangat penting di abad 21 ini. Hampir semua aplikasi yang kita gunakan sehari-hari merupakan aplikasi yang berkomunikasi dengan komputer lain. Akan tetapi, komunikasi antar dua komputer tidak selalu berjalan sesuai yang diinginkan. Komunikasi antar komputer melalui jaringan rentan mengalami gangguan sehingga pesan yang dikirim tidak selalu bebas dari error. Untuk itu, perlu dilakukan deteksi terhadap error pada pesan untuk menjamin tingkat kebenaran pesan.
 
