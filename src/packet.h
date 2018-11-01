@@ -6,18 +6,16 @@ class Packet
 {
 private:
 	int seqNum;
+	int dataLength;
 	char data;
 	char checksum;
 	const char SOH;
-	const char STX; 
-	const char ETX;
 public:
-	Packet(int seqNum, char data, char checksum);
+	Packet(int seqNum, int dataLength, char data, char checksum);
 	int getSeqnum();
 	const char getSOH();
-	const char getSTX();
+	int getdataLength();
 	char getData();
-	const char getETX();
 	char getChecksum();
 	bool isCheckSumEqual(char checksum);
 	void printPacket();	
