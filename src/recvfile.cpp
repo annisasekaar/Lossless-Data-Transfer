@@ -4,12 +4,35 @@ using namespace std;
 #include <vector>
 #include <iostream>
 #include <fstream>
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+
+#define FRAME_SIZE 1034
+#define ACK_SIZE 6
+
+/* GLOBAL VARIABLES */
+// struct sockaddr_in soc_addr_send, soc_addr_recv;
+struct sockaddr_in send_addr, recv_addr;
+int sock;
+socklen_t sock_send_len;
+
+void sendACK() {
+    char ack[ACK_SIZE];
+    char frame[FRAME_SIZE];
+
+    while (true) {
+        recvfrom(sock, (char *) frame, ACK_SIZE, 0, (struct sockaddr *) &send_addr, &sock_send_len);
+        cout << "recieved: " << frame << endl;
+
+        // >>> ini kirim balik ACK <<<
+        sendto(sock, (char *) frame, sizeof(frame), 0, (struct sockaddr *) &send_addr, sock_send_len);
+    }
+}
 
 int main(int argc, char const *argv[])
 {
@@ -21,30 +44,28 @@ int main(int argc, char const *argv[])
         cout << "Correct command:" << endl;
         cout << "./recvfile <filename> <windowsize> <buffersize> <port>" << endl;
         cout << endl << "Arguement count: " << argc << endl;
-        return -1;
+        return EXIT_FAILURE;
     } else {
         file_name = argv[1];
-        windowsize = atoi(argv[2]);
-        buffersize = atoi(argv[3]);
+        windowsize = atoi(argv[2]) * DATA_SIZE;
+        buffersize = atoi(argv[3]) * DATA_SIZE;
         port = atoi(argv[4]);
     }
 
     // creating socket
-    struct sockaddr_in soc_addr_send;
-    struct sockaddr_in soc_addr_recv;
-    socklen_t sock_send_len = sizeof(soc_addr_send);
+    sock_send_len = sizeof(send_addr);
 
     // creating socket
-    int sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+    sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
 
-    // declaring address
-    memset((char *) &soc_addr_recv, 0, sizeof(soc_addr_recv));
-    soc_addr_recv.sin_family = AF_INET;
-    soc_addr_recv.sin_port = htons(port);
-    soc_addr_recv.sin_addr.s_addr = htonl(INADDR_ANY);
+    // declaring receive (server) address
+    memset((char *) &recv_addr, 0, sizeof(recv_addr));
+    recv_addr.sin_family = AF_INET;
+    recv_addr.sin_port = htons(port);
+    recv_addr.sin_addr.s_addr = htonl(INADDR_ANY);
 
     // binding socket to selected port
-    bind(sock, (struct sockaddr*) &soc_addr_recv, sizeof(soc_addr_recv));
+    bind(sock, (struct sockaddr*) &recv_addr, sizeof(recv_addr));
 
     cout << "Waiting for data..." << endl;
 
@@ -52,13 +73,12 @@ int main(int argc, char const *argv[])
     char * buffer = new char[buffersize];
 
     // receiving message
-    int recv_len = recvfrom(sock, buffer, buffersize, 0, (struct sockaddr *) &soc_addr_send, &sock_send_len);
+    recvfrom(sock, buffer, buffersize, 0, (struct sockaddr *) &send_addr, &sock_send_len);
     cout << "Message recieved from client: " << buffer << endl;
 
     // send back
     char word[] = "Hello too from reciever!!";
-    sendto(sock, word, sizeof(word), 0, (struct sockaddr*) &soc_addr_send, sock_send_len);
-
+    sendto(sock, word, sizeof(word), 0, (struct sockaddr*) &send_addr, sock_send_len);
 
     return 0;
 }
