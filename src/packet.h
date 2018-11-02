@@ -7,17 +7,14 @@ class Packet
 private:
 	int seqNum;
 	int dataLength;
-	char data;
-	char checksum;
+	char * data;
 	const char SOH;
 public:
-	Packet(int seqNum, int dataLength, char data, char checksum);
+	Packet(int seqNum, int dataLength, char * data);
 	int getSeqnum();
 	const char getSOH();
 	int getdataLength();
 	char getData();
-	char getChecksum();
-	bool isCheckSumEqual(char checksum);
 	void printPacket();	
 };
 
