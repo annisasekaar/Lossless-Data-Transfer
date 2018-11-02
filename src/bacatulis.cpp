@@ -6,27 +6,25 @@
 using namespace std;
 
 
-void readFile(char text[], string& output[]) {
+void readFile(char text[], char output[], int &idx) {
     ifstream fin;
     string line;
     fin.open(text);
-    int idx = 0;
+	char c;
     if (fin.is_open()) {
-        while(getline(fin,line)){
-            output[idx] = line;
+        while (fin.get(c)) {
+            output[idx] = c;
             idx++;
         }
     }
     fin.close();
 }
 
-void writeFile(char text[], string input[]) {
+void writeFile(char text[], char input[], int idxMax) {
     ofstream result (text);
     int idx = 0;
-    int size = sizeof(input)/sizeof(input[0]);
-    cout<<size;
     if (result.is_open()) {
-        while(idx < size){
+        while(idx < idxMax){
             result <<input[idx];
             idx++;
         }
@@ -36,10 +34,11 @@ void writeFile(char text[], string input[]) {
 
 
 int main(){
-    string output[1000];
+    char output[1000];
     char filein[] = "Input.txt";
     char fileout[] = "Output.txt";
-    readFile(filein, output);
-    writeFile(fileout, output);
+	int idx = 0;
+    readFile(filein, output, idx);
+    writeFile(fileout, output, idx);
     return 0;
 }
